@@ -1,0 +1,95 @@
+@model MyApp.Namespace.Tasks
+
+@{
+    ViewData["Title"] = "Create New Task";
+}
+
+@{
+    Layout = "../Shared/_TaskLayout.cshtml";
+}
+
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="~/css/site.css" />
+
+<script>
+    function calculateEndDate() {
+        const startDate = document.getElementById('c_startDate').value;
+        const estimatedDays = parseInt(document.getElementById('c_EstimateDays').value);
+        const endDateField = document.getElementById('c_endDate');
+
+        if (startDate && !isNaN(estimatedDays)) {
+            const start = new Date(startDate);
+            start.setDate(start.getDate() + estimatedDays);
+
+            const day = ("0" + start.getDate()).slice(-2);
+            const month = ("0" + (start.getMonth() + 1)).slice(-2);
+            const year = start.getFullYear();
+
+            endDateField.value = `${year}-${month}-${day}`;
+        }
+    }
+</script>
+
+
+
+<div class="container mx-auto p-8">
+    <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">Create new Task</h2>
+
+    <form method="post" asp-action="Create" asp-asp-controller="Task"
+        class="bg-white p-6 rounded-lg shadow-xl max-w-2xl mx-auto space-y-6">
+        <div class="form-group">
+            <label for="c_Title" class="block text-gray-700 font-medium">Title</label>
+            <input type="text"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="c_Title" name="c_Title" required />
+        </div>
+
+        <div class="form-group">
+            <label for="c_Description" class="block text-gray-700 font-medium">Description</label>
+            <textarea
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="c_Description" name="c_Description" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="c_EstimateDays" class="block text-gray-700 font-medium">Estimated Days</label>
+            <input type="number"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="c_EstimateDays" name="c_EstimateDays" oninput="calculateEndDate()" required />
+        </div>
+
+        <div class="form-group">
+            <label for="c_startDate" class="block text-gray-700 font-medium">Start Date</label>
+            <input type="date"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="c_startDate" name="c_startDate" onchange="calculateEndDate()" required />
+        </div>
+
+        <div class="form-group">
+            <label for="c_endDate" class="block text-gray-700 font-medium">End Date</label>
+            <input type="date"
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="c_endDate" name="c_endDate" readonly />
+        </div>
+
+        <div class="form-group">
+            <label for="c_Status" class="block text-gray-700 font-medium">Status</label>
+            <select
+                class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                id="c_Status" name="c_Status">
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <div class="form-group text-center">
+            <button type="submit"
+                class="px-6 py-3 bg-black text-white font-semibold rounded-md hover:bg-gray-500 transition-all">Create
+                Task</button>
+        </div>
+    </form>
+</div>

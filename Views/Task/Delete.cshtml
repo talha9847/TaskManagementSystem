@@ -1,0 +1,30 @@
+@model MyApp.Namespace.Tasks
+@{
+    Layout = null;
+}
+@{
+    Layout = "../Shared/_TaskLayout.cshtml";
+}
+
+
+
+    <div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-lg shadow-lg space-y-6">
+        <h2 class="text-2xl font-semibold text-center text-red-600">Delete Task</h2>
+        
+        <p class="text-lg text-center">Are you sure you want to delete this task? This action cannot be undone.</p>
+
+        <div class="space-y-4">
+            <div><strong>Task ID:</strong> @Model.c_TaskId</div>
+            <div><strong>Title:</strong> @Model.c_Title</div>
+            <div><strong>Description:</strong> @Model.c_Description</div>
+            <div><strong>Assigned Employee ID:</strong> @Model.c_EmpId</div>
+        </div>
+
+        <form method="post" class="flex justify-center space-x-4">
+            <input type="hidden" name="id" value="@Model.c_TaskId" />
+            <button type="submit" class="btn bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 focus:outline-none transition duration-300">Yes, Delete</button>
+            <a href="@Url.Action("Index", "Task")" class="btn bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 focus:outline-none transition duration-300">Cancel</a>
+        </form>
+    </div>
+    
+

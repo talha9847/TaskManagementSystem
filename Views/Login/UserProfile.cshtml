@@ -1,0 +1,91 @@
+@model MyApp.Namespace.User
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Navigation bar -->
+    <nav class="bg-black text-white flex justify-between p-4 shadow-md">
+        <ul class="flex space-x-6">
+            <li>
+                <a asp-action="Dashboard" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Home</a>
+            </li>
+            <li>
+                <a asp-action="User" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">User Profile</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-controller="Task"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Task</a>
+            </li>
+            <li>
+                <a asp-action="EditPassword" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Edit Password</a>
+            </li>
+        </ul>
+        <ul class="flex space-x-6">
+            <li>
+                <a asp-action="Logout" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100 py-8 px-4">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+
+            <h2 class="text-3xl font-bold text-center mb-6 text-gray-700">Edit Profile</h2>
+
+            <form asp-action="UpdateProfile" method="post" enctype="multipart/form-data">
+                <div class="mb-6">
+                    <label for="Name" class="block text-lg font-medium text-gray-700">Name</label>
+                    <input type="text" id="Name" name="c_Name" value="@Model.c_Name"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <div class="mb-6">
+                    <label for="ProfileImage" class="block text-lg font-medium text-gray-700">Profile Image</label>
+                    <input type="file" id="ProfileImage" name="profileImage"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                    @if (!string.IsNullOrEmpty(Model.c_Image))
+                    {
+                        <div class="mt-2">
+                            <!-- Append a timestamp to the image URL to prevent caching -->
+                            <img src="@Url.Content($"~/profile_images/{Model.c_Image}?t={DateTime.Now.Ticks}")"
+                                alt="Current User Image" class="w-16 h-16 rounded-full border-2 border-gray-300" />
+                        </div>
+                    }
+                </div>
+
+
+
+                <div class="mt-6 text-center">
+                    <button type="submit"
+                        class="bg-black text-white px-6 py-3 rounded-md w-full hover:bg-gray-500 transition-all">Update
+                        Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

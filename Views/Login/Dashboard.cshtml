@@ -1,0 +1,137 @@
+@{
+    Layout = null; // This disables the layout
+}
+@model List<MyApp.Namespace.Notification>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Management System</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.31/dist/sweetalert2.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-cover bg-center filter" style="background-image: url('/profile_images/ishan.mistri603@gmail.com.png');">
+
+    <nav class="bg-black text-white flex flex-row justify-between">
+        <ul class="flex space-x-3 p-3">
+            <li>
+                <a asp-action="Dashboard" asp-controller="Login" class="hover:bg-gray-700 px-3 py-2 rounded">Home</a>
+            </li>
+            <li>
+                <a asp-action="User" asp-controller="Login" class="hover:bg-gray-700 px-3 py-2 rounded">User Profile</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-controller="Task" class="hover:bg-gray-700 px-3 py-2 rounded">Task</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-controller="Ajax"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Ajax Page</a>
+            </li>
+        </ul>
+        <ul class="flex space-x-3 p-3">
+            <li>
+                <a asp-action="Logout" asp-controller="Login" class="hover:bg-gray-700 px-3 py-2 rounded">Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="page">
+        <p>Welcome to the Dashboard!</p>
+        <p>@TempData["LoginSuccess"]</p>
+    </div>
+
+    @if (Model.Any())
+    {
+        <ul>
+            @foreach (var notification in Model)
+            {
+                <li id="notif-@notification.Id">
+                    <strong>@notification.Message</strong><br />
+                    <small>@notification.Timestamp</small><br>
+                    <button onclick="dismissNotification('@notification.Id')">Dismiss</button>
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+                    <script>
+                        function dismissNotification(notificationId) {
+                            $.ajax({
+                                url: '/Login/DismissNotification',
+                                type: 'POST',
+                                data: { notificationId: notificationId },
+                                success: function (response) {
+                                    if (response.success) {
+                                        console.log(response);
+                                        // Remove the notification element from the page
+                                        let notifElement = document.getElementById(`notif-${notificationId}`);
+                                        if (notifElement) {
+                                            notifElement.remove();
+                                        }
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("Error dismissing notification:", error);
+                                }
+                            });
+                        }
+
+                    </script>
+
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No notifications available.</p>
+    }
+
+
+
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.31/dist/sweetalert2.min.js"></script>
+        <script>
+
+
+
+
+            // Show SweetAlert for successful login
+            @if (TempData["LoginSuccess"] != null)
+                {
+                    <text>
+                        Swal.fire({
+                            title: 'Success!',
+                        text: '@TempData["LoginSuccess"]',
+                        icon: 'success',
+                        confirmButtonText: 'Okay'
+                                                                                                                                                                                });
+                    </text>
+            }
+
+                // Show SweetAlert for failed login
+                @if (TempData["LoginFailed"] != null)
+                {
+                    <text>
+                        Swal.fire({
+                            title: 'Error!',
+                        text: '@TempData["LoginFailed"]',
+                        icon: 'error',
+                        confirmButtonText: 'Okay'
+                                                                                                                                                                                });
+                    </text>
+            }
+        </script>
+    }
+
+
+</body>
+
+</html>

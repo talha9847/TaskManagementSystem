@@ -1,0 +1,98 @@
+@model MyApp.Namespace.User
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Management System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.31/dist/sweetalert2.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gray-100">
+
+    <nav class="bg-black text-white flex justify-between p-4 shadow-md">
+        <ul class="flex space-x-6">
+            <li>
+                <a asp-action="Dashboard" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Home</a>
+            </li>
+            <li>
+                <a asp-action="User" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">User Profile</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-controller="Task"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Task</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-controller="Ajax"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Ajax Page</a>
+            </li>
+        </ul>
+        <ul class="flex space-x-6">
+            <li>
+                <a asp-action="Logout" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="flex justify-center items-center min-h-screen bg-gray-100 py-8 px-4">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+
+            <div class="flex justify-center mb-6">
+                <div class="w-32 h-32 border-4 border-gray-300 rounded-full overflow-hidden">
+                    @if (Model != null && !string.IsNullOrEmpty(Model.c_Image))
+                    {
+                        <img src="@Url.Content($"~/profile_images/{Model.c_Email}.jpg")" alt="User Image"
+                            class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'" />
+                    }
+                    else
+                    {
+                        <img src="https://via.placeholder.com/150" alt="User Image" class="w-full h-full object-cover" />
+                    }
+                </div>
+            </div>
+
+            @if (Model != null)
+            {
+                <div class="text-lg text-gray-700 mb-4">
+                    <p><strong class="font-semibold">Name:</strong> <span class="text-gray-600">@Model.c_Name</span></p>
+                    <p><strong class="font-semibold">Email:</strong> <span class="text-gray-600">@Model.c_Email</span></p>
+                    <p><strong class="font-semibold">Password:</strong> <span class="text-gray-600">@Model.c_Password</span>
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="error mb-4 text-red-500">
+                    <p>User profile not found. Please log in again.</p>
+                </div>
+            }
+
+            <div class="mt-6 text-center">
+                <a href="@Url.Action("UserProfile", "Login")"
+                    class="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-500 transition-all">
+                    Edit Profile
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    </script>
+</body>
+
+</html>

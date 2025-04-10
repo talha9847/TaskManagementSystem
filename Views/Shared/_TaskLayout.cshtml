@@ -1,0 +1,51 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Management System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <nav class="bg-black text-white flex justify-between p-4 shadow-md">
+        <ul class="flex space-x-6">
+            <li>
+                <a asp-action="Dashboard" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Home</a>
+            </li>
+            <li>
+                <a asp-action="User" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">User Profile</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-controller="Task"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Task</a>
+            </li>
+        </ul>
+        <ul class="flex space-x-6">
+            <li>
+                <a asp-action="Logout" asp-controller="Login"
+                    class="hover:bg-gray-700 px-4 py-2 rounded-md transition-all">Logout</a>
+            </li>
+        </ul>
+    </nav>
+</head>
+
+<body class="bg-gray-100">
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+
+
+</body>
+
+</html>

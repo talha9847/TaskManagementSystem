@@ -1,0 +1,82 @@
+@model MyApp.Namespace.Tasks
+@{
+    Layout = null;
+}
+@{
+    Layout = "../Shared/_TaskLayout.cshtml";
+}
+
+
+<div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold text-center mb-6">Edit Task</h2>
+
+    <form method="post" asp-action="Edit" asp-route-id="@Model.c_TaskId" class="space-y-6">
+        <input type="hidden" name="c_TaskId" value="@Model.c_TaskId" />
+        <input type="hidden" name="c_EmpId" value="@Model.c_EmpId" />
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="c_Title" class="text-sm font-semibold">Title</label>
+                <input type="text" class="form-control w-full p-3 rounded-md border border-gray-300" id="c_Title"
+                    name="c_Title" value="@Model.c_Title" required />
+            </div>
+
+            <div class="form-group">
+                <label for="c_EstimateDays" class="text-sm font-semibold">Estimated Days</label>
+                <input type="number" class="form-control w-full p-3 rounded-md border border-gray-300"
+                    id="c_EstimateDays" name="c_EstimateDays" value="@Model.c_EstimateDays" required />
+            </div>
+
+            <div class="form-group">
+                <label for="c_startDate" class="text-sm font-semibold">Start Date</label>
+                <input type="date" class="form-control w-full p-3 rounded-md border border-gray-300" id="c_startDate"
+                    name="c_startDate" value="@Model.c_startDate.ToString("yyyy-MM-dd")" required />
+            </div>
+
+            <div class="form-group">
+                <label for="c_endDate" class="text-sm font-semibold">End Date</label>
+                <input type="date" class="form-control w-full p-3 rounded-md border border-gray-300" id="c_endDate"
+                    name="c_endDate" value="@Model.c_endDate.ToString("yyyy-MM-dd")" required readonly />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="c_Description" class="text-sm font-semibold">Description</label>
+            <textarea class="form-control w-full p-3 rounded-md border border-gray-300" id="c_Description"
+                name="c_Description" rows="4" required>@Model.c_Description</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="c_Status" class="text-sm font-semibold">Status</label>
+            <select class="form-control w-full p-3 rounded-md border border-gray-300" id="c_Status" name="c_Status">
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <div class="form-group flex justify-center">
+            <button type="submit"
+                class="btn bg-black text-white py-3 px-6 rounded-md hover:bg-gray-600 transition duration-300">Update
+                Task</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('c_EstimateDays').addEventListener('input', updateEndDate);
+    document.getElementById('c_startDate').addEventListener('input', updateEndDate);
+
+    function updateEndDate() {
+        const startDate = document.getElementById('c_startDate').value;
+        const estimatedDays = document.getElementById('c_EstimateDays').value;
+
+        if (startDate && estimatedDays) {
+            const start = new Date(startDate);
+            start.setDate(start.getDate() + parseInt(estimatedDays));
+
+            const endDate = start.toISOString().split('T')[0];
+            document.getElementById('c_endDate').value = endDate;
+        }
+    }
+</script>

@@ -1,0 +1,500 @@
+@{
+    ViewData["Title"] = "Task List";
+    Layout = "../Shared/_AjaxLayout.cshtml";
+}
+
+
+
+    <div class="container mx-auto p-8">
+        <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">Task List</h2>
+        <div class="overflow-x-auto bg-white rounded-lg shadow-lg">
+            <table id="taskTable" class="min-w-full table-auto text-sm text-left">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Task ID</th>
+                        <th class="px-4 py-2">Title</th>
+                        <th class="px-4 py-2">Description</th>
+                        <th class="px-4 py-2">Estimated Days</th>
+                        <th class="px-4 py-2">Start Date</th>
+                        <th class="px-4 py-2">End Date</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be inserted here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-center">
+            <button id="openAddTaskModal"
+                class="bg-black text-white px-6 py-3 rounded-md w-full max-w-xs hover:bg-gray-500 transition-all">Add
+                Task</button>
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- Edit Task Modal -->
+    <!-- Edit Task Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h2 class="text-lg font-semibold mb-4">Edit Task</h2>
+            <form id="editTaskForm">
+                <input type="hidden" id="editTaskId">
+
+                <div class="mb-2">
+                    <label class="block text-sm font-medium">Title:</label>
+                    <input type="text" id="editTitle" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium">Description:</label>
+                    <textarea id="editDescription" class="w-full border rounded px-3 py-2"></textarea>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium">Estimated Days:</label>
+                    <input type="number" id="editEstimatedDays" class="w-full border rounded px-3 py-2"
+                        oninput="updateEndDate()">
+                </div>
+
+                <div class="mb-2">
+                    <label class="block text-sm font-medium">Start Date:</label>
+                    <input type="date" id="editStartDate" class="w-full border rounded px-3 py-2"
+                        oninput="updateEndDate()">
+                </div>
+
+                <div class="mb-2">
+                    <label class="block text-sm font-medium">End Date:</label>
+                    <input type="date" id="editEndDate" class="w-full border rounded px-3 py-2" readonly>
+                </div>
+
+                <div class="mb-2">
+                    <label class="block text-sm font-medium">Status:</label>
+                    <select id="editStatus" class="w-full border rounded px-3 py-2">
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeEditModal()"
+                        class="bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+                    <button type="submit" id="save"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 🔹 Add Task Modal -->
+    <div id="addTaskModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <!-- Close Button -->
+            <button class="absolute top-2 right-3 text-gray-600 hover:text-gray-900 text-xl"
+                onclick="closeAddTaskModal()">
+                &times;
+            </button>
+
+            <h2 class="text-lg font-semibold mb-4 text-center">Add Task</h2>
+
+            <form id="addTaskForm" class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium">Title:</label>
+                    <input type="text" id="newTitle" class="w-full border rounded px-3 py-2" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Description:</label>
+                    <textarea id="newDescription" class="w-full border rounded px-3 py-2" required></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Estimated Days:</label>
+                    <input type="number" id="newEstimatedDays" class="w-full border rounded px-3 py-2"
+                        oninput="calculateEndDate()" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Start Date:</label>
+                    <input type="date" id="newStartDate" class="w-full border rounded px-3 py-2"
+                        onchange="calculateEndDate()">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">End Date:</label>
+                    <input type="date" id="newEndDate" class="w-full border rounded px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Status:</label>
+                    <select id="newStatus" class="w-full border rounded px-3 py-2">
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeAddTaskModal()"
+                        class="bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+
+                    <button type="submit" onclick="saveButton()"
+                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Save
+                        Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+        function showButton(message, type = 'success') {
+            Swal.fire({
+                title: type === 'success' ? 'Success!' : 'Error!',
+                text: message,
+                icon: type, // 'success' or 'error'
+                confirmButtonText: 'Ok'
+            });
+        }
+
+
+
+
+
+        function calculateEndDate() {
+            const startDate = document.getElementById('newStartDate').value;
+            const estimatedDays = parseInt(document.getElementById('newEstimatedDays').value);
+            const endDateField = document.getElementById('newEndDate');
+
+            if (startDate && !isNaN(estimatedDays)) {
+                const start = new Date(startDate);
+                start.setDate(start.getDate() + estimatedDays);
+
+                const day = ("0" + start.getDate()).slice(-2);
+                const month = ("0" + (start.getMonth() + 1)).slice(-2);
+                const year = start.getFullYear();
+
+                endDateField.value = `${year}-${month}-${day}`;
+            }
+        }
+
+
+
+
+        function updateEndDate() {
+            const startDate = document.getElementById('editStartDate').value;
+            const estimatedDays = document.getElementById('editEstimatedDays').value;
+
+            if (startDate && estimatedDays && !isNaN(estimatedDays)) {
+                const start = new Date(startDate);
+
+                if (isNaN(start.getTime())) {
+                    alert("Invalid start date.");
+                    return;
+                }
+
+                start.setDate(start.getDate() + parseInt(estimatedDays));
+
+                const endDate = start.toISOString().split('T')[0];
+
+                document.getElementById('editEndDate').value = endDate;
+            } else {
+                document.getElementById('editEndDate').value = "";
+            }
+        }
+
+
+
+        $(document).ready(function () {
+            $("#openAddTaskModal").click(function () {
+                $("#newTitle").val("");
+                $("#newDescription").val("");
+                $("#newEstimatedDays").val("");
+                $("#newStartDate").val("");
+                $("#newEndDate").val("");
+                $("#newStatus").val("Pending");
+
+                $("#addTaskModal").removeClass("hidden");
+            });
+
+            window.closeAddTaskModal = function () {
+                $("#addTaskModal").addClass("hidden");
+                Swal.fire({
+                    title:'Adding cancelled',
+                    text:'task Adding is canelled',
+                    icon:'error',
+                    confirmButtonText:'Ok'
+                })
+            }
+
+
+            $("#addTaskForm").submit(function (e) {
+                e.preventDefault();
+
+                var newTask = {
+                    c_Title: $("#newTitle").val(),
+                    c_Description: $("#newDescription").val(),
+                    c_EstimateDays: $("#newEstimatedDays").val(),
+                    c_startDate: $("#newStartDate").val(),
+                    c_endDate: $("#newEndDate").val(),
+                    c_Status: $("#newStatus").val()
+                };
+
+                $.ajax({
+                    url: "/Ajax/AddTask",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(newTask),
+                    success: function (response) {
+                        showButton('Your data has been saved.');
+                        if (response.success) {
+
+                            loadTasks();
+
+                            $("#addTaskModal").addClass("hidden");
+                        }
+                    },
+                    error: function () {
+                        showButton('Failed to add task. Please try again.', 'error');
+                    }
+                });
+
+                return false;
+            });
+        });
+
+
+
+        $(document).ready(function () {
+            loadTasks();
+        });
+
+        function loadTasks() {
+            $.ajax({
+                url: "/Ajax/GetTasks",
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        let tasks = response.data;
+                        let rows = "";
+
+                        tasks.forEach(task => {
+                            rows += `<tr id="task-${task.c_TaskId}" class="border-b hover:bg-gray-100">
+                        <td class="px-6 py-4">${task.c_TaskId}</td>
+                        <td class="px-6 py-4">${task.c_Title}</td>
+                       <td class="px-6 py-4">${task.c_Description.length > 50 ? task.c_Description.substring(0, 50) + "..." : task.c_Description}</td>
+
+                        <td class="px-6 py-4">${task.c_EstimateDays}</td>
+                        <td class="px-6 py-4">${new Date(task.c_startDate).toLocaleDateString()}</td>
+                        <td class="px-6 py-4">${new Date(task.c_endDate).toLocaleDateString()}</td>
+                      <td class="px-6 py-4 ${task.c_Status === 'Pending' ? 'text-red-500' : task.c_Status === 'In Progress' ? 'text-yellow-500' : task.c_Status === 'Completed' ? 'text-green-500' : ''}">${task.c_Status}</td>
+                        <td class="px-6 py-4">
+                            <a href="javascript:void(0);" onclick="openEditModal(${task.c_TaskId})" 
+                                class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition-all">Edit</a>
+                          <a href="javascript:void(0);"  class="deletetask bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all" data-task-id="${task.c_TaskId}">Delete</a>
+
+                        </td>
+                    </tr>`;
+                        });
+
+                        $("#taskTable tbody").html(rows);
+                    } else {
+                        $("#taskTable tbody").html("<tr><td colspan='8' class='text-center text-red-500'>" + response.message + "</td></tr>");
+                    }
+                },
+                error: function () {
+                    $("#taskTable tbody").html("<tr><td colspan='8' class='text-center text-red-500'>Failed to load tasks.</td></tr>");
+                }
+            });
+        }
+
+
+
+        function openEditModal(taskId) {
+            $.ajax({
+                url: `/Ajax/GetTaskById/${taskId}`,
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        let task = response.data;
+
+
+                        // Convert dates to YYYY-MM-DD format
+                        let startDate = formatDateForInput(task.c_startDate);
+                        let endDate = formatDateForInput(task.c_endDate);
+
+                        // Debugging: Log formatted dates
+                        console.log("Formatted Start Date:", startDate);
+                        console.log("Formatted End Date:", endDate);
+
+                        // Populate the modal fields
+                        $("#editTaskId").val(task.c_TaskId);
+                        $("#editTitle").val(task.c_Title);
+                        $("#editDescription").val(task.c_Description);
+                        $("#editEstimatedDays").val(task.c_EstimateDays);
+                        $("#editStartDate").val(startDate); // Set formatted start date
+                        $("#editEndDate").val(endDate); // Set formatted end date
+                        $("#editStatus").val(task.c_Status);
+
+                        // Show the modal
+                        $("#editModal").removeClass("hidden");
+                    }
+                },
+                error: function () {
+                    alert("Failed to fetch task data.");
+                }
+            });
+        }
+
+        // Helper function to convert date to YYYY-MM-DD format
+        function formatDateForInput(dateString) {
+            if (!dateString) return ""; // Handle null or undefined dates
+
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+                return dateString;
+            }
+
+            let parts = dateString.split("/");
+            if (parts.length === 3) {
+                return `20${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+
+            if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2) {
+                return `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+            }
+
+            if (dateString instanceof Date || !isNaN(new Date(dateString))) {
+                let date = new Date(dateString);
+                return date.toISOString().split("T")[0];
+            }
+
+            return "";
+        }
+
+        // Close Edit Modal
+        function closeEditModal() {
+            $("#editModal").addClass("hidden");
+        }
+
+        // jQuery to handle form submission and update task
+        $(document).ready(function () {
+            $("#editTaskForm").submit(function (e) {
+                e.preventDefault(); // Prevent page reload
+
+                let updatedTask = {
+                    c_TaskId: $("#editTaskId").val(),
+                    c_Title: $("#editTitle").val(),
+                    c_Description: $("#editDescription").val(),
+                    c_EstimateDays: $("#editEstimatedDays").val(),
+                    c_startDate: $("#editStartDate").val(),
+                    c_endDate: $("#editEndDate").val(),
+                    c_Status: $("#editStatus").val()
+                };
+
+                console.log("Sending task data:", updatedTask);
+
+                // Send the updated task data via Ajax to the server
+                $.ajax({
+                    url: "/Ajax/UpdateTask",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(updatedTask),
+                    success: function (response) {
+                        console.log("Server Response:", response);
+
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Task Updated!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                loadTasks();
+                                $("#editModal").addClass("hidden");
+                            })
+
+
+                        } else 
+                            Swal.fire({
+                                title:'Task Updated Failed!',
+                                text:response.message,
+                                icon:'error',
+                                confirmButtonText:'Ok'
+                            })
+                        }
+                    },
+                    error: function () {
+                        alert("Failed to update task.");
+                    }
+                });
+
+                return false; // Ensure the function exits without reloading
+            });
+        });
+
+
+        $(document).on("click", ".deletetask", function () {
+            var taskId = $(this).data("task-id");
+            if (!confirm("Are you sure you want to delete this task?")) return;
+
+            Swal.fire({
+                title: "Are you sure you want to Delete",
+                text: "you will not revert it",
+                showCancelButton: true,
+                confirmButtonText: "Yes Delete it",
+                cancelButtonText: "not keep it"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: "/Ajax/DeleteTask",
+                        type: "POST",
+                        data: { taskId: taskId },
+                        success: function (response) {
+                            console.log("Response from server:", response); // Log the response
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Deleted',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'Ok'
+                                })
+                                $("#task-" + taskId).remove(); // Remove task from table
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok'
+                                })
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Error:", xhr.responseText);
+                            Swal.fire({
+                                title: 'Failed!',
+                                text: 'Failed to delete task',
+                                icon: 'error',
+                                confirmButtonText: 'Ok'
+                            })
+                        }
+                    });
+                }
+
+
+            })
+        });
+
+    </script>
+
+
